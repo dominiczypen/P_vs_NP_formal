@@ -8,7 +8,7 @@
 \addtolength{\voffset}{-1cm}
 \addtolength{\textheight}{2cm}
 
-%\textheight=645pt
+%\mathttheight=645pt
 \usepackage{amssymb}
 \usepackage{amsthm}
 \usepackage{amsfonts}
@@ -19,10 +19,10 @@
 
 \theoremstyle{definition}
 \newtheorem{definition}[lemma]{Definition}
-\newtheorem{remark}[lemma]{Bemerkung}
-\newtheorem{example}[lemma]{Beispiel}
-\newtheorem{conjecture}[lemma]{Vermutung}
-\newtheorem{exercise}[lemma]{\"Ubung}
+\newtheorem{remark}[lemma]{Remark}
+\newtheorem{example}[lemma]{Example}
+\newtheorem{conjecture}[lemma]{Conjecture}
+\newtheorem{exercise}[lemma]{Exercise}
 \newcommand{\C}{\text{Config}}
 
 %-----------------------------------
@@ -31,7 +31,7 @@
 \parindent = 0mm
 
 \begin{center}
-    \textbf{\Large ${\bf P}$ vs ${\bf NP}$ \\ for the (formalist-leaning) mathematician}
+    \textbf{\Large ${\bf P}$ vs ${\bf NP}$ \\ for the rigorous mathematician}
 \end{center}
 
 \vspace*{3mm}
@@ -57,30 +57,31 @@ Let $ \omega$ denote the first infinite ordinal (which can be thought
 of as $ \mathbb{N}$, the set of non-negative integers). Recall that each
 $n \in \omega$ is an {\em ordinal}, that is, $0:=\emptyset$ and for $n>0$,
 its members are the numbers $ 0,\ldots, n-1$, so $ n = \{0,\ldots,n-1\}$. 
-We write $n^\omega$ for the collection of all maps $f:\omega \to n$. 
+We write $\omega^\omega$ for the collection of all maps $f:\omega \to \omega$.
+Members of $\omega^\omega$ are also called {\sl integer sequences}.
 
 Our first 
 central concept, the {\bf configuration}, is the mathematical model of the 
 notion of the {\bf tape} of the Turing machine, together with the {\bf writing 
 head} and the {\bf internal state} of the machine. 
 
-We fix a finite set $Q$ such that $Q \cap \omega = 0$ and refer to $Q$ as the
-{\em set of states}. $Q$ has two special states, called {\em accept} and 
-{\em reject}. 
 
-\begin{definition} A {\em configuration} is a triple $C = (q, h, t) \in
-    Q \times \omega \times 3^\omega$  (where $3 = \{0,1,2\}$) such that the
-    sequence (function) $t:\omega\to 3$ is eventually constant with value $2$. (This means
-    that there is $N\in \omega$ such that $c(k) = 2$ for all $k\in \omega$ 
-    with $k\geq N$.) The collection of configurations over the set of states $Q$ 
-    is denoted by $\C(Q)$.
+\begin{definition} Let $n \geq 2$ be an integer. Then an {\em $n$-configuration} is a 
+    function (also called an {\sl integer sequence}) $c\in \omega^\omega$ with the 
+    following properties:
+    \begin{enumerate}
+        \item $c(0) \in n = \{0,\ldots,n-1\}$,
+        \item $c(1) \geq 2$,
+        \item $c(k) \in \{0,1,2\}$ for all $k\in\omega\setminus\{0,1\}$, and
+        \item $c$ is eventually constant with value $2$. (This means
+            that there is $N\in \omega$ such that $c(k) = 2$ for all $k\in \omega$
+            with $k\geq N$.)
+    \end{enumerate}
 \end{definition}
 
-{\bf Remarks.} The letter $t$ stands for "tape". 
-We interpret $2$ as being the {\em blank} symbol. The {\em value} symbols
-are 0 and 1. The blank symbol 2 can be used to separate "input strings" consisting of 0,1.
-The value $h\in \omega$ can be thought of as the position of the {\em head} of the 
-Turing machine, and $q\in Q$ is the current state.
+Next, we illustrate and explain the meanings of the entries of $c$ in detail:
+
+\vspace*{1mm}
 
 %--- bildli ---
 \begin{center}
@@ -91,19 +92,21 @@ Turing machine, and $q\in Q$ is the current state.
 
     % Boxes:
     \node at (0,1) {Tape:};
-    \node[box] at (1,1) (h0) {1};
-    \node[box] at (1.5,1) (h1) {0};
-    \node[box] at (2,1) (h2) {0};
+    \node[box] at (1,1) (h0) {7};
+    \node[box] at (1.5,1) (h1) {5};
+    \node[box] at (2,1) (h2) {1};
     \node[box] at (2.5,1) (h3) {0};
-    \node[box] at (3,1) (h4) {2};
+    \node[box] at (3,1) (h4) {0};
     \node[box] at (3.5,1) (h5) {1};
-    \node[box] at (4,1) (h6) {1};
+    \node[box] at (4,1) (h6) {2};
     \node[box] at (4.5,1) (h7) {0};
-    \node[box] at (5,1) (h8) {0};
-    \node[box] at (5.5,1) (h9) {2};
-    \node[box] at (6,1) (h10) {2};
+    \node[box] at (5,1) (h8) {1};
+    \node[box] at (5.5,1) (h9) {0};
+    \node[box] at (6,1) (h10) {1};
     \node[box] at (6.5,1) (h11) {2};
-    \node at (7.5, 1) (h16) {$\ldots$};
+    \node[box] at (7,1) (h11) {2};
+    \node[box] at (7.5,1) (h11) {2};
+    \node at (8.5, 1) (h16) {$\ldots$};
 
     % Positions:
     \node at (-0.22,0.5) {\footnotesize{Position:}};
@@ -119,78 +122,106 @@ Turing machine, and $q\in Q$ is the current state.
     \node at (5.5,0.5) {\footnotesize{9}};
     \node at (6,0.5) {\footnotesize{10}};
     \node at (6.5,0.5) {\footnotesize{11}};
-    \node at (7.5, 0.5) {\footnotesize{$\ldots$}};
+    \node at (7,0.5) {\footnotesize{12}};
+    \node at (7.5,0.5) {\footnotesize{13}};
+    \node at (8.5, 0.5) {\footnotesize{$\ldots$}};
 
     % ... etc-lines:
 
-    \draw (6.5,1.25) -- (8.5,1.25);
-    \draw (6.5,0.75) -- (8.5,0.75);
+    \draw (7.5,1.25) -- (9.5,1.25);
+    \draw (7.5,0.75) -- (9.5,0.75);
 
     % blank / head / state
 
-    \node[box] at (2, 3) (b){$2$ = blank};
-    \node[box] at (5.5, 3) (head) {$h = 8$};
-    \node[box] at (7.5, 2) (state) {current state: $q$};
+    \node at (0, 3) (state){$c(0) = 7$: current state};
+    \node at (3.5, 2.1) (head){$c(1) = 5$: head position};
+    \node at (7.5, 2.5) (blank){$2$ = blank};
 
     % arrows
 
-    \draw[->] (b) -- (h4);
-    \draw[->] (head) -- (h8);
+    \draw[->] (state) -- (h0); % state -> 0 arrow
+    \draw[->] (h1) .. controls (2,2) and (3,2) .. (h5);
+                     % pointer arrow from 1 to 5
+    \draw[->] (blank) .. controls (6,1) and (4.2,2) .. (h6);
+                     % blank arrow
 
 \end{tikzpicture}
 \end{center}
-%--- bildli ---
+
+%--- /bildli ---
+
+\vspace*{1mm}
+
+\begin{itemize}
+    \item $c(0)\in n$ represents the {\em state} of the possible $n$ 
+        states $\{0,\ldots,n-1\}$ of the configuration. States 0 and 1 
+        (stored in the first cell, $c(0)$) have a special meaning: 
+        $0$ = {\em reject}, $1$ = {\em accept}.
+    \item $c(1) \geq 2$ represents the position of the {\em read/write head}
+        of the configuration.
+    \item We interpret $2$ as being the {\em blank} symbol. The {\em value} 
+        symbols are 0 and 1. The blank symbol 2 can be used to separate "input strings" 
+        consisting of 0,1. Every configuration is eventually blank (=2).
+\end{itemize}
+
+The collection of $n$-configurations is denoted by $\C_(n)$.
 
 %--------------
 \section{Turing machines}
-We are ready for the central notion -- maybe of computer science:
 
 \begin{definition}
-A {\em Turing machine} is a tuple $(Q, \delta)$, such that 
-\begin{itemize}
-\item $Q$ is a finite set 
-    with $Q\cap \omega = \emptyset$ containing two special elements
-{\em accept} and {\em reject}, and
-\item $\delta: Q\times \{0,1,2\} \to Q \times \{0,1,2\} \times \{-1,1\}$ is a function 
-    with the following property: if $q \in \{${\em reject, accept}$\}$ 
-        and $b\in \{0,1,2\}$, then $\delta(q,b) = (q,b,-1)$.
-        If $\delta(q,b) = (q', b', s)$ for $q,q'\in Q, b,b'\in \{0,1,2\}$ and 
-        $ s\in \{-1,1\}$
-        we write
-        \begin{itemize}
-            \item $\text{state}(\delta(q,b)) = q'$,
-            \item $\text{output}(\delta(q,b)) = b'$, and
-            \item $\text{step}(\delta(q,b)) = s\in\{-1,1\}$. 
-        \end{itemize}
-\end{itemize}
+A {\em Turing machine} is a tuple $(n, \delta)$ where $n\in\omega,
+    n\geq 2$ and $\delta: n \times \{0,1,2\} \to n \times \{0,1,2\} \times
+    \{-1,1\}$ is a function with following property: 
+    \begin{quote} if 
+    $q \in \{0,1\}$\footnote{recall that 0,1 are special states with 
+        the meanings
+    $\{${\em reject, accept}$\}$, respectively.}
+     and $b\in \{0,1,2\}$, then $\delta(q,b) = (q,b,-1)$.
+    \end{quote}
+    The interpretation of this is that $\delta$ gets constant
+    whenever an {\em accept} or {\em reject} state has been reached.
+
+    If $\delta(q,b) = (q', b', s)$ for $q,q'\in Q, b,b'\in \{0,1,2\}$ and 
+    $ s\in \{-1,1\}$
+     we write
+     \begin{itemize}
+            \item $\mathtt{nextstate}(q,b) = q'$,
+            \item $\mathtt{output}(q,b) = b'$, and
+            \item $\mathtt{step}(q,b) = s\in\{-1,1\}$. 
+    \end{itemize}
     The function $\delta$ is called the {\em transition function} and can 
-    be looked at as the "clockwork" of the Turing machine.
+    be looked at as the {\sl clockwork} of the Turing machine.
 \end{definition}
 
-Time for the synthesis: combining configurations and Turing machines!
+%------------------
+\section{Synthesis: combining configurations and Turing machines}
 
 We need the following {\em convention}: if $n\in\omega$, define the function 
-$\text{pred}:\omega\to \omega$ by $0 \mapsto 0$ and $n \mapsto n-1$ for $n\in\omega
+$\mathtt{pred}:\omega\to \omega$ by $0 \mapsto 0$ and $n \mapsto n-1$ for $n\in\omega
 \setminus\{0\}$. By slight abuse of notation, we write $n-1$ instead of 
-$\text{pred}(n)$ for all $n\in \omega$.
+$\mathtt{pred}(n)$ for all $n\in \omega$.
 
 \begin{definition}
-    Let $T=(Q,\delta)$ be a Turing machine, $T$ induces a {\em configuration
-    map} $${\frak C}_T: \C(Q)\to \C(Q)$$ in the following way:
+    Let $T=(n,\delta)$ be a Turing machine, $T$ induces a {\em configuration
+    map} $${\frak C}_T: \C(n)\to \C(n)$$ in the following way. Let $c\in \C(n)$,
+    then we define ${\frak C}_T(c): \omega \to \omega$ by
 
-    If $C = (q,h,c)\in \C(Q)$ then ${\frak C}_T\big((q,h,c)\big) = (q', h', c')$
-    where
     \begin{itemize}
-        \item $q' = \text{state}\big(\delta(q, c(h))\big), $\footnote{recall
-            that $c(h)$ is the value of the configuration at head position $h$.}
-        \item $h' = h + \text{step}\big(\delta(q, c(h))\big)$, and 
-            \footnote{remember that $\text{step}\big(\delta(q,c(h))\big)\in\{0,1\}$, and $0 - 1 = 0$ in
+        \item ${\frak C}_T(c)(0) = \mathtt{nextstate}(c(0), c(c(1)))$
+            \footnote{$c(0)$ is the current state 
+            in the set of possible states $\{0,\ldots,n-1\}$, and $c(1)$
+            is the position of the read/write head, and finally $c(c(1))$ is the
+            {\bf value} of the cell at the head.}
+        \item ${\frak C}_T(c)(1) = c(1) + \mathtt{step}(c(0), c(c(1)))$, 
+            \footnote{$\mathtt{step}(c(0),c(c(1)))\in\{-1,1\}$, and $0 - 1 = 0$ in
             our convention.}
-        \item $c': \omega \to \{0,1,2\}$ is defined by $c'(h) = \text{output}\big(\delta(q, c(h))\big)$
-            and $c'(x) = c(x)$ for all $x\in \omega\setminus \{h\}$. 
-            \footnote{that is $c'$ agrees 
-            with $c$ except possibly on the head position $h$.}
+        \item ${\frak C}_T(c)(c(1)) = \mathtt{output}(c(0), c(c(1))$, and
+            \footnote{so the output created by the transition function $\delta$ gets
+            inserted at the head position $c(1)$.}
+        \item ${\frak C}_T(c)(x) = c(x)$ for all $x\in\omega \setminus \{0,1,c(1)\}$. 
     \end{itemize}
-
+    So we have ${\frak C}_T(c) \in \omega^\omega$, and it easy to check that
+    ${\frak C}_T(c) \in \C(n)$. 
 \end{definition}
 \end{document}
