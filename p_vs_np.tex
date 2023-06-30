@@ -24,6 +24,7 @@
 \newtheorem{conjecture}[lemma]{Conjecture}
 \newtheorem{exercise}[lemma]{Exercise}
 \newcommand{\C}{\text{Config}}
+\newcommand{\len}{\text{len}}
 
 %-----------------------------------
 \begin{document}
@@ -164,13 +165,14 @@ Next, we illustrate and explain the meanings of the entries of $c$ in detail:
         consisting of 0,1. Every configuration is eventually blank (=2).
 \end{itemize}
 
-The collection of $n$-configurations is denoted by $\C_(n)$.
+We let $\C(n)$ be the collection of $n$-configurations. Note that
+whenever $n\leq n'\in \omega$ and $n\geq 2$, we have $\C(n)\subseteq \C(n')$.
 
 %--------------
 \section{Turing machines}
 
 \begin{definition}
-A {\em Turing machine} is a tuple $(n, \delta)$ where $n\in\omega,
+A {\em Turing machine} is a tuple $M=(n, \delta)$ where $n\in\omega,
     n\geq 2$ and $\delta: n \times \{0,1,2\} \to n \times \{0,1,2\} \times
     \{-1,1\}$ is a function with following property: 
     \begin{quote} if 
@@ -179,49 +181,112 @@ A {\em Turing machine} is a tuple $(n, \delta)$ where $n\in\omega,
     $\{${\em reject, accept}$\}$, respectively.}
      and $b\in \{0,1,2\}$, then $\delta(q,b) = (q,b,-1)$.
     \end{quote}
-    The interpretation of this is that $\delta$ gets constant
-    whenever an {\em accept} or {\em reject} state has been reached.
-
-    If $\delta(q,b) = (q', b', s)$ for $q,q'\in Q, b,b'\in \{0,1,2\}$ and 
-    $ s\in \{-1,1\}$
-     we write
-     \begin{itemize}
-            \item $\mathtt{nextstate}(q,b) = q'$,
-            \item $\mathtt{output}(q,b) = b'$, and
-            \item $\mathtt{step}(q,b) = s\in\{-1,1\}$. 
-    \end{itemize}
-    The function $\delta$ is called the {\em transition function} and can 
-    be looked at as the {\sl clockwork} of the Turing machine.
 \end{definition}
+
+The interpretation of this is that $\delta$ gets constant
+whenever an {\em accept} or {\em reject} state has been reached.
+
+If $\delta(q,b) = (q', b', s)$ for $q,q'\in Q, b,b'\in \{0,1,2\}$ and 
+$ s\in \{-1,1\}$
+we write
+\begin{itemize}
+    \item $\mathtt{nextstate}(q,b) = q'$,
+    \item $\mathtt{output}(q,b) = b'$, and
+    \item $\mathtt{step}(q,b) = s\in\{-1,1\}$. 
+\end{itemize}
+The function $\delta$ is called the {\em transition function} and can 
+be looked at as the {\sl clockwork} of the Turing machine.
 
 %------------------
 \section{Synthesis: combining configurations and Turing machines}
 
-We need the following {\em convention}: if $n\in\omega$, define the function 
-$\mathtt{pred}:\omega\to \omega$ by $0 \mapsto 0$ and $n \mapsto n-1$ for $n\in\omega
-\setminus\{0\}$. By slight abuse of notation, we write $n-1$ instead of 
-$\mathtt{pred}(n)$ for all $n\in \omega$.
-
 \begin{definition}
-    Let $T=(n,\delta)$ be a Turing machine, $T$ induces a {\em configuration
-    map} $${\frak C}_T: \C(n)\to \C(n)$$ in the following way. Let $c\in \C(n)$,
-    then we define ${\frak C}_T(c): \omega \to \omega$ by
+    If $M=(n,\delta)$ be a Turing machine, then $M$ induces a {\em configuration
+    map} $${\frak C}_M: \C(n)\to \C(n)$$ in the following way. If $c\in \C(n)$,
+    then we define ${\frak C}_M(c): \omega \to \omega$ by
 
     \begin{itemize}
-        \item ${\frak C}_T(c)(0) = \mathtt{nextstate}(c(0), c(c(1)))$
+        \item ${\frak C}_M(c)(0) = \mathtt{nextstate}(c(0), c(c(1)))$
             \footnote{$c(0)$ is the current state 
             in the set of possible states $\{0,\ldots,n-1\}$, and $c(1)$
             is the position of the read/write head, and finally $c(c(1))$ is the
             {\bf value} of the cell at the head.}
-        \item ${\frak C}_T(c)(1) = c(1) + \mathtt{step}(c(0), c(c(1)))$, 
-            \footnote{$\mathtt{step}(c(0),c(c(1)))\in\{-1,1\}$, and $0 - 1 = 0$ in
-            our convention.}
-        \item ${\frak C}_T(c)(c(1)) = \mathtt{output}(c(0), c(c(1))$, and
+        \item ${\frak C}_M(c)(1) = 
+            \max\big\{2, c(1) + \mathtt{step}(c(0), c(c(1)))\big\}$,
+            \footnote{$\mathtt{step}(c(0),c(c(1)))\in\{-1,1\}$.}
+        \item ${\frak C}_M(c)(c(1)) = \mathtt{output}(c(0), c(c(1)))$, and
             \footnote{so the output created by the transition function $\delta$ gets
             inserted at the head position $c(1)$.}
-        \item ${\frak C}_T(c)(x) = c(x)$ for all $x\in\omega \setminus \{0,1,c(1)\}$. 
+        \item ${\frak C}_M(c)(x) = c(x)$ for all $x\in\omega \setminus \{0,1,c(1)\}$. 
     \end{itemize}
-    So we have ${\frak C}_T(c) \in \omega^\omega$, and it easy to check that
-    ${\frak C}_T(c) \in \C(n)$. 
+    So we have ${\frak C}_M(c) \in \omega^\omega$, and it easy to check that
+    ${\frak C}_M(c) \in \C(n)$. 
 \end{definition}
+
+%------------------------------------
+\section{Run time and worst-case run time}
+
+If $X\neq \emptyset$ is a set and $f:X\to X$, we define inductively for any $x\in X$:
+\begin{itemize}
+    \item $f^{(0)}(x) = x$, and
+    \item $f^{(n+1)}(x) = f\big(f^{(n)}(x)\big)$.
+\end{itemize}
+
+For the remainder of this section, fix $n\geq 2$.
+
+\begin{definition}
+    If $M$ is an $n$-Turing machine and $c\in \C(n)$, then we consider
+    the set 
+    $${\mathcal T}_M(c) = \big\{n\in\omega:{\frak C}_M^{(n)}(0) \in 
+        \{0,1\}\big\}.\footnote{This is the set of iterations $n$
+        such that the state stored in the first cell is 0 (reject)
+        or 1 (accept).}$$
+    \begin{enumerate}
+        \item If ${\mathcal T}_M(c)\neq\emptyset$, we 
+            say that $M$ {\em terminates}
+        on constellation $c$. 
+    \item The {\em run time} of $M$ on $c$ defined by 
+        $t_M(c) = \min {\mathcal T}_M(c)$ if $M$ terminates on $c$,
+            and we set $t_M(c) = \infty$ otherwise.
+    \item If there is $n\in \omega$ with ${\frak C}_M^{(n)}(0)=0$, then
+        $M$ is said to {\em reject} $c$.
+    \item If there is $n\in \omega$ with ${\frak C}_M^{(n)}(0)=1$, then
+        $M$ is said to {\em accept} $c$.
+    \item We define the
+        the {\em language accepted by $M$} by $$L(M) = \{c \in \C(n): M
+    \text{ accepts } c\}.$$
+    \end{enumerate}
+\end{definition}
+
+For the {\em worst case run time} we need the notion of the
+length of a configuration. Note that every configuration is
+eventually constant $2$.
+
+\begin{definition} If $c\in \C(n)$, the the {\em length} of $c$
+    is defined by $$\len(c) = \min\{N\in\omega\setminus\{0,1\}: c(x) = 2
+   \text{ for all } x\geq N\} - 2.$$
+\end{definition}
+
+(It is a bit aesthetically displeasing that one has to do this
+$\omega\setminus\{0,1\} [\ldots] -2$ trick. This is because the 
+first two cells $c(0), c(1)$ of each configuration $c$ have special meanings,
+and the input starts at $c(2)$.)
+
+\begin{definition}
+    If $M$ is an $n$-Turing machine and $\ell\in\omega$ then 
+    we define the {\em worst case run time} to be 
+    $$T_M(\ell) = \sup\{t_M(c): c \in \C(n)\text{ and } 
+    \len(c) = \ell\}\in \omega\cup\{\infty\}.$$ We say 
+    that $M$ {\bf runs in 
+    polynomial time} if there are positive integers $j, k$ 
+    such that for all $\ell \in \omega$ we have $T_M(\ell) \leq
+    \ell^j + k.$
+\end{definition}
+
+%--------------------
+\section{The class {\bf P}}
+
+$\mathbf{P} = \big\{L\subseteq \omega^\omega : $ there is an integer $n\geq 2$
+and an $n$-Turing machine $M$ \\ \hspace*{27mm} such that 
+$L=L(M)$ and $M$ runs in polynomial time$\big\}$.
 \end{document}
